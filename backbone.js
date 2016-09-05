@@ -110,6 +110,7 @@
     once: function(name, callback, context) {
       if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
       var self = this;
+      //调用undescore中的方法，自定义了一个函数：取消绑定，执行回调函数
       var once = _.once(function() {
         self.off(name, once);
         callback.apply(this, arguments);
@@ -122,24 +123,31 @@
     // callbacks with that function. If `callback` is null, removes all
     // callbacks for the event. If `name` is null, removes all bound
     // callbacks for all events.
+    // 如果 `context` 是 null, 移除所有有该函数的回调.
+    // 如果 `callback` 是 null, 移除该事件下的所有回调.
+    // 如果 `name` 是 null, 移除所有绑定的回调函数
     off: function(name, callback, context) {
       if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
 
       // Remove all callbacks for all events.
+      // obj.off()移除所有事件
       if (!name && !callback && !context) {
         this._events = void 0;
         return this;
       }
 
+      //未指定name时则取所有name
       var names = name ? [name] : _.keys(this._events);
       for (var i = 0, length = names.length; i < length; i++) {
         name = names[i];
 
         // Bail out if there are no events stored.
+        //不存在该name的事件则continue
         var events = this._events[name];
         if (!events) continue;
 
         // Remove all callbacks for this event.
+        //没有指定回调函数，则删除name对应的整个仓库
         if (!callback && !context) {
           delete this._events[name];
           continue;
@@ -148,7 +156,10 @@
         // Find any remaining events.
         var remaining = [];
         for (var j = 0, k = events.length; j < k; j++) {
+          //取name对应的事件仓库里某个事件处理函数
           var event = events[j];
+
+          //保留不需要移除的事件处理函数
           if (
             callback && callback !== event.callback &&
             callback !== event.callback._callback ||
@@ -175,11 +186,17 @@
     // receive the true name of the event as the first argument).
     trigger: function(name) {
       if (!this._events) return this;
-      var args = slice.call(arguments, 1);
+      // 1之后的参数都是需要传递给回调函数的
+      var args = slice.call(arguments, 1); 
+
       if (!eventsApi(this, 'trigger', name, args)) return this;
       var events = this._events[name];
       var allEvents = this._events.all;
+
+      //通过固定的name来触发
       if (events) triggerEvents(events, args);
+
+      //通过固定的all来触发
       if (allEvents) triggerEvents(allEvents, arguments);
       return this;
     },
