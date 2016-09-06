@@ -204,22 +204,31 @@
     // Inversion-of-control versions of `on` and `once`. Tell *this* object to
     // listen to an event in another object ... keeping track of what it's
     // listening to.
-    //监听者存储了被监听者 TODO
+    //监听者存储了被监听者
+    //backbonejs推荐使用listento替换on：view中有个model，model上绑定了一些时间，在销毁view前首先需要移除model上的事件。如果使用on绑定，则需要手动调用off移除；但是如果使用listento，那么view在remove时就会自动调用off，不需要手动调用off了
     listenTo: function(obj, name, callback) {
       var listeningTo = this._listeningTo || (this._listeningTo = {});
       var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       listeningTo[id] = obj;
 
+      //name是个map对象，在eventsApi中执行对应的action时，callback对应的位置是参数context的位置，则需要赋值为this
       if (!callback && typeof name === 'object') callback = this;
       obj.on(name, callback, this);
       return this;
     },
 
     listenToOnce: function(obj, name, callback) {
+      // this.listenToOnce(obj, {
+      //    'add':    this.addHandle,
+      //    'remove': this.removeHandle
+      // });
       if (typeof name === 'object') {
         for (var event in name) this.listenToOnce(obj, event, name[event]);
         return this;
       }
+
+
+      // this.listenToOnce(obj, 'add remove', callback);
       if (eventSplitter.test(name)) {
         var names = name.split(eventSplitter);
         for (var i = 0, length = names.length; i < length; i++) {
@@ -228,6 +237,7 @@
         return this;
       }
       if (!callback) return this;
+
       var once = _.once(function() {
         this.stopListening(obj, name, once);
         callback.apply(this, arguments);
@@ -239,11 +249,17 @@
     // Tell this object to stop listening to either specific events ... or
     // to every object it's currently listening to.
     stopListening: function(obj, name, callback) {
+
+      // 已经监控的所有事件储存起来
       var listeningTo = this._listeningTo;
       if (!listeningTo) return this;
       var remove = !name && !callback;
       if (!callback && typeof name === 'object') callback = this;
+
+      // 清空临时存储的所有事件，只添加需要监控的事件
+      // 双赋值写法
       if (obj) (listeningTo = {})[obj._listenId] = obj;
+
       for (var id in listeningTo) {
         obj = listeningTo[id];
         obj.off(name, callback, this);
@@ -264,6 +280,7 @@
     if (!name) return true;
 
     // Handle event maps.
+    // 递归调用action
     if (typeof name === 'object') {
       for (var key in name) {
         obj[action].apply(obj, [key, name[key]].concat(rest));
@@ -272,6 +289,7 @@
     }
 
     // Handle space separated event names.
+    // 先拆分再调用action
     if (eventSplitter.test(name)) {
       var names = name.split(eventSplitter);
       for (var i = 0, length = names.length; i < length; i++) {
@@ -300,6 +318,7 @@
   };
 
   // Aliases for backwards compatibility.
+  // 向后兼容
   Events.bind   = Events.on;
   Events.unbind = Events.off;
 
@@ -1101,6 +1120,7 @@
 
   // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
+  // todo
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     options || (options = {});
