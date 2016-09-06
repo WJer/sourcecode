@@ -96,11 +96,15 @@
       //检测api
       if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
       //相当于this._events = this._events || {};,但是下面的赋值操作的概率要小，提高性能
-      //事件池：name-->[事件处理程序1、事件处理程序2......]
+
+      //事件仓库：name-->[事件处理程序1、事件处理程序2......]
       this._events || (this._events = {});
-      //name事件的事件仓库是一个数组
+
+      //name事件的事件池是一个数组
       var events = this._events[name] || (this._events[name] = []);
+
       //当前想要绑定的事件push到事件池当中
+      //obj1.listenTo(obj2),obj2中的事件池池中会存在对obj1的引用，就是下面的context，这就是backbone中导致内存泄漏的原因
       events.push({callback: callback, context: context, ctx: context || this});
       return this;
     },
@@ -132,7 +136,7 @@
       // Remove all callbacks for all events.
       // obj.off()移除所有事件
       if (!name && !callback && !context) {
-        this._events = void 0;
+        this.  = void 0;
         return this;
       }
 
