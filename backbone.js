@@ -95,8 +95,8 @@
     on: function(name, callback, context) {
       //检测api
       if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
+      
       //相当于this._events = this._events || {};,但是下面的赋值操作的概率要小，提高性能
-
       //事件仓库：name-->[事件处理程序1、事件处理程序2......]
       this._events || (this._events = {});
 
