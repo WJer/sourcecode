@@ -204,10 +204,12 @@
     // Inversion-of-control versions of `on` and `once`. Tell *this* object to
     // listen to an event in another object ... keeping track of what it's
     // listening to.
+    //监听者存储了被监听者 TODO
     listenTo: function(obj, name, callback) {
       var listeningTo = this._listeningTo || (this._listeningTo = {});
       var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
       listeningTo[id] = obj;
+
       if (!callback && typeof name === 'object') callback = this;
       obj.on(name, callback, this);
       return this;
@@ -284,9 +286,11 @@
   // A difficult-to-believe, but optimized internal dispatch function for
   // triggering events. Tries to keep the usual cases speedy (most internal
   // Backbone events have 3 arguments).
+  // 知识扩展：apply和call的性能存在差异
   var triggerEvents = function(events, args) {
     var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
     switch (args.length) {
+      //赋值操作和调用方法合写
       case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
       case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
       case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
