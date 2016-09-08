@@ -1124,10 +1124,11 @@
 
   // Creating a Backbone.View creates its initial element outside of the DOM,
   // if an existing element is not provided...
-  // todo
+  // View是个构造函数
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
     options || (options = {});
+    //把必要的属性添加到View的实例对象里
     _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
@@ -1179,6 +1180,7 @@
 
     // Change the view's element (`this.el` property) and re-delegate the
     // view's events on the new element.
+    //会先解除事件绑定，再绑定事件
     setElement: function(element) {
       this.undelegateEvents();
       this._setElement(element);
@@ -1191,6 +1193,7 @@
     // context or an element. Subclasses can override this to utilize an
     // alternative DOM manipulation API and are only required to set the
     // `this.el` property.
+    //$在程序开始执行时作为Backbone对象的一个属性
     _setElement: function(el) {
       this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
       this.el = this.$el[0];
@@ -1253,6 +1256,8 @@
     // If `this.el` is a string, pass it through `$()`, take the first
     // matching element, and re-assign it to `el`. Otherwise, create
     // an element from the `id`, `className` and `tagName` properties.
+    //如果el不存在，则通过tagname来创建元素标签，然后再setElement
+    //如果el存在，则直接setElementS
     _ensureElement: function() {
       if (!this.el) {
         var attrs = _.extend({}, _.result(this, 'attributes'));
@@ -1267,6 +1272,7 @@
 
     // Set attributes from a hash on this view's element.  Exposed for
     // subclasses using an alternative DOM manipulation API.
+    //视图元素$el设置属性
     _setAttributes: function(attributes) {
       this.$el.attr(attributes);
     }
@@ -1752,10 +1758,11 @@
   // Helper function to correctly set up the prototype chain, for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
+  // 函数对象上的方法中this都指向该函数
   var extend = function(protoProps, staticProps) {
     var parent = this;
     var child;
-
+    
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
     // by us to simply call the parent's constructor.
