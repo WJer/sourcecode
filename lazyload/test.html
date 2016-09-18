@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript" src="./js/jquery.js"></script>
+	<script type="text/javascript" src="./js/lazyload.js"></script>
+	<style>
+		.container{
+			width: 500px;
+			background: #eee;
+			margin: 0 auto;
+		}
+		h2{
+			text-align: center;
+		}
+		img{
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h2>懒加载图片</h2>
+		<div class="">
+			<img src="" real-url="" class="lazyimg">
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	
+	$('.lazyimg').lazyload({
+
+
+	});
+
+
+</script>
+</html>
