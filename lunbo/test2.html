@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="lunbo.js"></script>
+	<style type="text/css">
+		.img_box{
+			position: relative;
+			width: 760px;
+			height: 200px;
+			margin: 0 auto;
+		}
+		img{
+			position: absolute;
+			display: inline-block;
+			width: 540px;
+			height: 200px;
+		}
+	</style>
+</head>
+<body>
+	<div class="img_box">
+		<img src="1.jpg" style="bottom:0;left: 0px;height: 190px;width: auto;z-index:3;">
+		<img src="2.jpg" style="bottom:0;left: 110px;z-index:4;">
+		<img src="3.jpg" style="bottom: 0;left: 137px;height: 190px;width: auto;z-index:3;">
+	</div>
+</body>
+<script type="text/javascript">
+	
+	new Lunbo({
+		urls: ['1.jpg','2.jpg','3.jpg','4.jpg'],
+		width: 540,
+		height: 200,
+		wrapper: '.img_box'
+	});
+
+</script>
+</html>
