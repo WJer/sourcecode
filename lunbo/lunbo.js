@@ -23,7 +23,13 @@
 		},
 
 		render: function(){
-
+			var imgarr = this.get('urls'),
+				imghtml = '';
+			for(var i = 0; i<imgarr.length; i++){
+				imghtml+='<img src="'+imgarr[i]+'">';
+			}
+			this.$el.html(imghtml);
+			this.$imgs = $('img',this.$el);
 		},
 
 		moveToLeft: function(){
